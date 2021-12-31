@@ -7,9 +7,10 @@ import numpy as np
 import math
 from datetime import datetime
 import win32clipboard
+import re
 
  # set wd
- os.chdir("C:/Users/Stephen/Desktop/Python/ps_selenium_scraper")
+os.chdir("C:/Users/Stephen/Desktop/Python/ps_selenium_scraper")
 
 # create ps_selenium_scraper function
 def ps_selenium_scraper(month):
@@ -55,9 +56,12 @@ def ps_selenium_scraper(month):
         time.sleep(2)
         driver.find_element_by_xpath("//input[@type = 'email']").send_keys(username)
         driver.find_element_by_xpath("//input[@type = 'password']").send_keys(password)
-#        time.sleep(4)
-        driver.find_element_by_xpath("//button[@id = 'CookieAcceptance']").click()        
-        driver.find_element_by_xpath("//input[@id = 'login-button']").click()        
+        driver.find_element_by_xpath("//button[@id = 'ccc-notify-accept']").click()   
+#        time.sleep(2)
+#        driver.find_element_by_xpath("//button[@class = 'remodal-close']").click() 
+        time.sleep(2)
+        driver.find_element_by_xpath("//input[@id = 'login-button']").click()  
+        time.sleep(2)
         
         
         #//////////////////////////////////////////////////////////////////////
@@ -73,6 +77,7 @@ def ps_selenium_scraper(month):
                 # get article_url
                 article_element = driver.find_elements_by_xpath("//ol[@id = 'tab-latest-commentaries-content']//article//a[@href][@title]")
                 article_url = article_element[1].get_attribute("href")
+                article_url = re.sub("#comments", "", article_url)
                 prior_article_url = article_element[2].get_attribute("href")
                 
                 
@@ -112,7 +117,7 @@ def ps_selenium_scraper(month):
                 
                 
                 # if article year is current and article_month matches requested month, then append article_text to article_output_df
-                if(article_year == int(str(datetime.now())[0:4]) and article_month == month):
+                if(article_year == datetime.now().year and article_month == month):
                         article_text_df = pd.DataFrame({"article_text" : [article_text]})
                         article_output_df = article_output_df.append(article_text_df)
                         
@@ -129,7 +134,7 @@ def ps_selenium_scraper(month):
                 
                 
                 # if article_month is the month after the requested month, get the previous article
-                if(article_year == int(str(datetime.now())[0:4]) and article_month == (month + 1)):
+                if(article_year == datetime.now().year and article_month == (month + 1)):
                         
                         # navigate to prior_article_url
                         driver.get(prior_article_url)
@@ -155,7 +160,7 @@ def ps_selenium_scraper(month):
                         article_text = "by: " + author + ". . . " + article_text
                         
                         # if article year is current and article_month matches requested month, then append article_text to article_output_df
-                        if(article_year == int(str(datetime.now())[0:4]) and article_month == month):
+                        if(article_year == datetime.now().year and article_month == month):
                                 article_text_df = pd.DataFrame({"article_text" : [article_text]})
                                 article_output_df = article_output_df.append(article_text_df)
                                                 
@@ -196,7 +201,7 @@ def ps_selenium_scraper(month):
 
 
 # run ps_selenium_scraper
-ps_selenium_scraper(9)
+ps_selenium_scraper(11)
 
 
 
