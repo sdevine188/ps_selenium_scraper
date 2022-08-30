@@ -75,10 +75,10 @@ def ps_selenium_scraper(month):
                 time.sleep(2)
         
                 # get article_url
-                article_element = driver.find_elements_by_xpath("//ol[@id = 'tab-latest-commentaries-content']//article//a[@href][@title]")
-                article_url = article_element[1].get_attribute("href")
-                article_url = re.sub("#comments", "", article_url)
-                prior_article_url = article_element[2].get_attribute("href")
+                article_element = driver.find_elements_by_xpath("//ol[@id = 'tab-latest-commentaries-content']//a[@href][@title]")
+                article_url = article_element[0].get_attribute("href")
+#                article_url = re.sub("#comments", "", article_url)
+                prior_article_url = article_element[1].get_attribute("href")
                 
                 
                 #//////////////////////////////////////////////////////////////////////
@@ -97,6 +97,11 @@ def ps_selenium_scraper(month):
                 date_element = driver.find_elements_by_xpath("//div[@class = 'article__byline']/time[@itemprop = 'datePublished']")
                 date = date_element[0].get_attribute("datetime")
                 article_year = int(date[0:4])
+
+                # if article_month = requested month and its an "onpoint" interview, skip to next authoer
+                if(article_month == month and article_url.__contains__("https://www.project-syndicate.org/onpoint/")):
+                        print(author + " has an OnPoint interview for this month, and will be skipped")
+                        continue
                 
                 # get author
                 author_element = driver.find_elements_by_xpath("//span[@class = 'listing__author author']")
@@ -126,15 +131,17 @@ def ps_selenium_scraper(month):
 
 
                 # if the current author only has articles for prior months, skip to next author 
-                if(article_month < month):
+                if(article_month < month and month != 12):
                         print(author + " does not have an article for this month")
                         continue
+                
                 
                 #//////////////////////////////////////////////////////////////////////
                 
                 
                 # if article_month is the month after the requested month, get the previous article
-                if(article_year == datetime.now().year and article_month == (month + 1)):
+                if(article_month == (month + 1) or \
+                     (article_month == 1 and month == 12)):
                         
                         # navigate to prior_article_url
                         driver.get(prior_article_url)
@@ -160,7 +167,7 @@ def ps_selenium_scraper(month):
                         article_text = "by: " + author + ". . . " + article_text
                         
                         # if article year is current and article_month matches requested month, then append article_text to article_output_df
-                        if(article_year == datetime.now().year and article_month == month):
+                        if(article_month == month):
                                 article_text_df = pd.DataFrame({"article_text" : [article_text]})
                                 article_output_df = article_output_df.append(article_text_df)
                                                 
@@ -201,7 +208,7 @@ def ps_selenium_scraper(month):
 
 
 # run ps_selenium_scraper
-ps_selenium_scraper(11)
+ps_selenium_scraper(8)
 
 
 
