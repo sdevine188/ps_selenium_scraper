@@ -9,7 +9,12 @@ from datetime import datetime
 import win32clipboard
 import re
 
+
+# chromedriver
+#https://googlechromelabs.github.io/chrome-for-testing/#stable
+
  # set wd
+os.getcwd()
 os.chdir("C:/Users/Stephen/Desktop/Python/ps_selenium_scraper")
 
 # create ps_selenium_scraper function
@@ -76,9 +81,19 @@ def ps_selenium_scraper(month):
         
                 # get article_url
                 article_element = driver.find_elements_by_xpath("//ol[@id = 'tab-latest-commentaries-content']//a[@href][@title]")
+                if len(article_element) == 0:
+                        print(f"no articles found on {ps_urls.iloc[i].values[0]}")
+                        continue
                 article_url = article_element[0].get_attribute("href")
-#                article_url = re.sub("#comments", "", article_url)
                 prior_article_url = article_element[1].get_attribute("href")
+                
+                # skip over urls for PS on-point interviews
+                if(article_url[0:42] == "https://www.project-syndicate.org/onpoint/"):
+                        article_url = article_element[1].get_attribute("href")
+                        prior_article_url = article_element[2].get_attribute("href")
+                
+                if(prior_article_url[0:42] == "https://www.project-syndicate.org/onpoint/"):
+                        prior_article_url = article_element[2].get_attribute("href")
                 
                 
                 #//////////////////////////////////////////////////////////////////////
@@ -97,16 +112,28 @@ def ps_selenium_scraper(month):
                 date_element = driver.find_elements_by_xpath("//div[@class = 'article__byline']/time[@itemprop = 'datePublished']")
                 date = date_element[0].get_attribute("datetime")
                 article_year = int(date[0:4])
-
-                # if article_month = requested month and its an "onpoint" interview, skip to next authoer
-                if(article_month == month and article_url.__contains__("https://www.project-syndicate.org/onpoint/")):
-                        print(author + " has an OnPoint interview for this month, and will be skipped")
-                        continue
+                
+                # if there is a promotional popup blocking access to article text, then close it
+                # note that the promotional popup close button currently is the 0th element returned,
+                # but there are five matching elements returned, and even when the promo popup isn't shown, there
+                # are still 4 matching elements returned. these throw an error if you try to click the 0th one though,
+                # so maybe they are hidden buttons... either way, this code tries to click the 0th, and if that fails
+                # it means the promo popup isnt shown, and so a dummy exception runs and the loop continues
+                try:
+                        driver.find_elements_by_xpath("//button[@aria-label = 'Close popup']")[0].click()
+                except:
+                        print("")
+              
                 
                 # get author
                 author_element = driver.find_elements_by_xpath("//span[@class = 'listing__author author']")
                 author = author_element[0].text
                 print(author)
+                
+                # if article_month = requested month and its an "onpoint" interview, skip to next author
+                if(article_month == month and article_url.__contains__("https://www.project-syndicate.org/onpoint/")):
+                        print(author + " has an OnPoint interview for this month, and will be skipped")
+                        continue
                 
                 # get article_text
                 body_text_elements = driver.find_elements_by_xpath("//div[@itemprop = 'articleBody']/p")
@@ -156,6 +183,22 @@ def ps_selenium_scraper(month):
                         date_element = driver.find_elements_by_xpath("//div[@class = 'article__byline']/time[@itemprop = 'datePublished']")
                         date = date_element[0].get_attribute("datetime")
                         article_year = int(date[0:4])
+                        
+                        # if article_month = requested month and its an "onpoint" interview, skip to next authoer
+                        if(article_month == month and article_url.__contains__("https://www.project-syndicate.org/onpoint/")):
+                                print(author + " has an OnPoint interview for this month, and will be skipped")
+                                continue
+                        
+                        # if there is a promotional popup blocking access to article text, then close it
+                        # note that the promotional popup close button currently is the 0th element returned,
+                        # but there are five matching elements returned, and even when the promo popup isn't shown, there
+                        # are still 4 matching elements returned. these throw an error if you try to click the 0th one though,
+                        # so maybe they are hidden buttons... either way, this code tries to click the 0th, and if that fails
+                        # it means the promo popup isnt shown, and so a dummy exception runs and the loop continues
+                        try:
+                                driver.find_elements_by_xpath("//button[@aria-label = 'Close popup']")[0].click()
+                        except:
+                                print("")
                         
                         # get article_text
                         body_text_elements = driver.find_elements_by_xpath("//div[@itemprop = 'articleBody']/p")
@@ -208,7 +251,7 @@ def ps_selenium_scraper(month):
 
 
 # run ps_selenium_scraper
-ps_selenium_scraper(8)
+# ps_selenium_scraper(11)
 
 
 
