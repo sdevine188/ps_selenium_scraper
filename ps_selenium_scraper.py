@@ -27,7 +27,6 @@ warnings.filterwarnings("ignore", category = DeprecationWarning)
 os.getcwd()
 os.chdir("C:/Users/sdevi/onedrive/desktop/python/ps_selenium_scraper")
 
-
 # create ps_selenium_scraper function
 def ps_selenium_scraper(month, part):
 
@@ -165,7 +164,7 @@ def ps_selenium_scraper(month, part):
                 
                 
                 # if article year is current and article_month matches requested month, then append article_text to article_output_df
-                if(article_year == datetime.now().year and article_month == month):
+                if(article_month == month):
                         article_text_df = pd.DataFrame({"article_text" : [article_text]})
                         article_output_df = pd.concat([article_output_df, article_text_df], ignore_index = True)
                         
@@ -255,8 +254,10 @@ def ps_selenium_scraper(month, part):
 
 
         # write file
+        print("length of article_output_df is " + str(len(article_output_df)))
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
         article_output_df.to_csv(file_name, index = False)
+        return article_output_df
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,9 +266,9 @@ def ps_selenium_scraper(month, part):
 
 
 # run ps_selenium_scraper
-# ps_selenium_scraper(month = 11, part = 1)
-# ps_selenium_scraper(month = 11, part = 2)
-# ps_selenium_scraper(month = 11, part = 3)
+# article_output_df = ps_selenium_scraper(month = 12, part = 1)
+# article_output_df = ps_selenium_scraper(month = 12, part = 2)
+# article_output_df = ps_selenium_scraper(month = 12, part = 3)
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -276,6 +277,7 @@ def ps_selenium_scraper(month, part):
 
 
 # loop through parts and articles, handling splits, and creating mp3 w openai tts api
+
 month = 11
 for part in list(range(3, 4)):
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
