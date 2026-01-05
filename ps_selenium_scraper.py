@@ -278,8 +278,8 @@ def ps_selenium_scraper(month, part):
 
 # loop through parts and articles, handling splits, and creating mp3 w openai tts api
 
-month = 11
-for part in list(range(3, 4)):
+month = 12
+for part in list(range(1, 4)):
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
         file_path = Path(file_name)
         if file_path.is_file():
