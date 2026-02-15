@@ -36,11 +36,13 @@ def ps_selenium_scraper(month, part):
         # read in urls
         ps_urls = pd.read_csv("ps_urls.csv")
         if part == 1:
-                ps_urls = ps_urls.iloc[0:11]
+                ps_urls = ps_urls.iloc[0:8]
         if part == 2:
-                ps_urls = ps_urls.iloc[11:22]
+                ps_urls = ps_urls.iloc[8:16]
         if part == 3:
-                ps_urls = ps_urls.iloc[22:]
+                ps_urls = ps_urls.iloc[16:24]
+        if part == 4:
+                ps_urls = ps_urls.iloc[24:]
         
         
         #//////////////////////////////////////////////////////////////////////
@@ -266,9 +268,10 @@ def ps_selenium_scraper(month, part):
 
 
 # run ps_selenium_scraper
-# article_output_df = ps_selenium_scraper(month = 12, part = 1)
-# article_output_df = ps_selenium_scraper(month = 12, part = 2)
-# article_output_df = ps_selenium_scraper(month = 12, part = 3)
+# article_output_df = ps_selenium_scraper(month = 1, part = 1)
+# article_output_df = ps_selenium_scraper(month = 1, part = 2)
+# article_output_df = ps_selenium_scraper(month = 1, part = 3)
+# article_output_df = ps_selenium_scraper(month = 1, part = 4)
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,8 +281,8 @@ def ps_selenium_scraper(month, part):
 
 # loop through parts and articles, handling splits, and creating mp3 w openai tts api
 
-month = 12
-for part in list(range(1, 4)):
+month = 1
+for part in list(range(1, 5)):
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
         file_path = Path(file_name)
         if file_path.is_file():
