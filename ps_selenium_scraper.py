@@ -77,9 +77,15 @@ def ps_selenium_scraper(month, part):
         # login
         driver.get(ps_urls.iloc[0].values[0][0:32] + "/account/login")
         time.sleep(2)
+        driver.find_element("xpath", "//button[@id = 'ccc-notify-accept']").click() 
+        time.sleep(2)
         driver.find_element("xpath", "//input[@type = 'email']").send_keys(username)
         driver.find_element("xpath", "//input[@type = 'password']").send_keys(password)
-        driver.find_element("xpath", "//button[@id = 'ccc-notify-accept']").click()    
+        time.sleep(2)
+        try:
+                driver.find_element("xpath", "//div[@data-mrf-role-close = 'true']//*[name() = 'svg']").click() 
+        except:
+                print("no login popup found")
         time.sleep(2)
         driver.find_element("xpath", "//input[@id = 'login-button']").click()  
         time.sleep(2)
@@ -126,7 +132,7 @@ def ps_selenium_scraper(month, part):
                 time.sleep(2)
         
                 # get article_month and article_year
-                date_element = driver.find_elements("xpath", "//div[@class = 'article__byline']/time")
+                date_element = driver.find_elements("xpath", "//address[@class = 'article__byline u-mt-se']/time")
                 date = date_element[0].get_attribute("datetime")
                 article_month = int(date[5:7])
                 article_year = int(date[0:4])
@@ -153,7 +159,7 @@ def ps_selenium_scraper(month, part):
                         continue
                 
                 # get article_text
-                body_text_elements = driver.find_elements("xpath", "//div[@itemprop = 'articleBody']/p")
+                body_text_elements = driver.find_elements("xpath", "//div[@class = 'article__body article__body--commentary  english']/p")
                 article_text = []
                 for i2 in list(range(0, len(body_text_elements))):
                         text_chunk = body_text_elements[i2].text
@@ -188,11 +194,12 @@ def ps_selenium_scraper(month, part):
                      (article_month == 1 and month == 12)):
                         
                         # navigate to prior_article_url
+                        print(f"prior_article_url is {prior_article_url}")
                         driver.get(prior_article_url)
                         time.sleep(2)
                 
                         # get article_month
-                        date_element = driver.find_elements("xpath", "//div[@class = 'article__byline']/time")
+                        date_element = driver.find_elements("xpath", "//address[@class = 'article__byline u-mt-se']/time")
                         date = date_element[0].get_attribute("datetime")
                         article_month = int(date[5:7])
                         article_year = int(date[0:4])
@@ -214,7 +221,7 @@ def ps_selenium_scraper(month, part):
                                 print("")
                         
                         # get article_text
-                        body_text_elements = driver.find_elements("xpath", "//div[@itemprop = 'articleBody']/p")
+                        body_text_elements = driver.find_elements("xpath", "//div[@class = 'article__body article__body--commentary  english']/p")
                         article_text = []
                         for i2 in list(range(0, len(body_text_elements))):
                                 text_chunk = body_text_elements[i2].text
@@ -268,10 +275,10 @@ def ps_selenium_scraper(month, part):
 
 
 # run ps_selenium_scraper
-# article_output_df = ps_selenium_scraper(month = 1, part = 1)
-# article_output_df = ps_selenium_scraper(month = 1, part = 2)
-# article_output_df = ps_selenium_scraper(month = 1, part = 3)
-# article_output_df = ps_selenium_scraper(month = 1, part = 4)
+# article_output_df = ps_selenium_scraper(month = 2, part = 1)
+# article_output_df = ps_selenium_scraper(month = 2, part = 2)
+# article_output_df = ps_selenium_scraper(month = 2, part = 3)
+# article_output_df = ps_selenium_scraper(month = 2, part = 4)
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +288,7 @@ def ps_selenium_scraper(month, part):
 
 # loop through parts and articles, handling splits, and creating mp3 w openai tts api
 
-month = 1
+month = 2
 for part in list(range(1, 5)):
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
         file_path = Path(file_name)
