@@ -242,6 +242,9 @@ def ps_selenium_scraper(month, part):
                 #//////////////////////////////////////////////////////////////////////
                 
                 
+                time.sleep(300)
+                
+                
         # get total_article_count
         total_article_count = article_output_df.shape[0]
 
@@ -275,10 +278,10 @@ def ps_selenium_scraper(month, part):
 
 
 # run ps_selenium_scraper
-# article_output_df = ps_selenium_scraper(month = 2, part = 1)
-# article_output_df = ps_selenium_scraper(month = 2, part = 2)
-# article_output_df = ps_selenium_scraper(month = 2, part = 3)
-# article_output_df = ps_selenium_scraper(month = 2, part = 4)
+# article_output_df = ps_selenium_scraper(month = 4, part = 1)
+# article_output_df = ps_selenium_scraper(month = 4, part = 2)
+# article_output_df = ps_selenium_scraper(month = 4, part = 3)
+# article_output_df = ps_selenium_scraper(month = 4, part = 4)
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +291,7 @@ def ps_selenium_scraper(month, part):
 
 # loop through parts and articles, handling splits, and creating mp3 w openai tts api
 
-month = 2
+month = 4
 for part in list(range(1, 5)):
         file_name = "ps_text_" + str(month) + "_part_" + str(part) + ".csv"
         file_path = Path(file_name)
